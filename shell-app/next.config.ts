@@ -1,6 +1,6 @@
 import NextFederationPlugin from "@module-federation/nextjs-mf";
 
-const PRODUCTS_APP_MFE_URL = process.env.PRODUCTS_APP_MFE_URL;
+const PRODUCTS_APP_MFE_URL = "https://mfe-shopping-poc-gdtu.vercel.app";
 
 const nextConfig = {
   reactStrictMode: true,

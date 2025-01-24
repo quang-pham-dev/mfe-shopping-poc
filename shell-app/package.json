@@ -6,6 +6,7 @@
     "dev": "NEXT_PRIVATE_LOCAL_WEBPACK=true next dev",
     "build": "NEXT_PRIVATE_LOCAL_WEBPACK=true next build",
     "start": "NEXT_PRIVATE_LOCAL_WEBPACK=true next start",
+    "export": "next export",
     "lint": "next lint"
   },
   "dependencies": {
