@@ -1,6 +1,6 @@
 import NextFederationPlugin from "@module-federation/nextjs-mf";
 
-const PRODUCTS_APP_MFE_URL = process.env.PRODUCTS_APP_MFE_URL;
+const SHELL_APP_MFE_URL = process.env.SHELL_APP_MFE_URL;
 
 const nextConfig = {
   reactStrictMode: true,
@@ -38,18 +38,17 @@ const nextConfig = {
     const { isServer } = options;
     config.plugins.push(
       new NextFederationPlugin({
-        name: "shell_app",
+        name: "products_app",
         remotes: {
-          products_app: `products_app@${
+          shell_app: `shell_app@${
             process.env.NODE_ENV === "development"
-              ? "http://localhost:3001"
-              : PRODUCTS_APP_MFE_URL
+              ? "http://localhost:3000"
+              : SHELL_APP_MFE_URL
           }/_next/static/${isServer ? "ssr" : "chunks"}/remoteEntry.js`
         },
         filename: "static/chunks/remoteEntry.js",
         exposes: {
-          "./Header": "./components/Header.tsx",
-          "./Footer": "./components/Footer.tsx"
+          "./Products": "./pages/index.tsx"
         },
         extraOptions: {
           debug: false, // `false` by default
