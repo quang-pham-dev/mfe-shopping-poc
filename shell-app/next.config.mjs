@@ -2,7 +2,6 @@ import NextFederationPlugin from "@module-federation/nextjs-mf";
 
 const PRODUCTS_APP_MFE_URL = "https://mfe-shopping-poc-gdtu.vercel.app";
 const FOOTER_APP_MFE_URL = "https://mfe-shopping-poc-footer.vercel.app";
-// const HEADER_APP_MFE_URL = "https://mfe-shopping-poc-header.vercel.app";
 
 const nextConfig = {
   reactStrictMode: true,
@@ -48,17 +47,12 @@ const nextConfig = {
             process.env.NODE_ENV === "development"
               ? "http://localhost:3003"
               : FOOTER_APP_MFE_URL
-          }/remoteEntry.js`,
-          // header_app: `header_app@${
-          //   process.env.NODE_ENV === "development"
-          //     ? "http://localhost:3002"
-          //     : HEADER_APP_MFE_URL
-          // }/remote.js`
+          }/remoteEntry.js`
         },
         filename: "static/chunks/remoteEntry.js",
         exposes: {},
         extraOptions: {
-          debug: false, // `false` by default
+          debug: true, // `false` by default
           exposePages: false // `false` by default
         },
         shared: {}
