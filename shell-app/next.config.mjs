@@ -41,6 +41,12 @@ const nextConfig = {
   },
   webpack(config, options) {
     const { isServer } = options;
+    const remoteUrl =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3003"
+        : FOOTER_APP_MFE_URL;
+
+    console.log("Remote URL:", remoteUrl + "/remoteEntry.js");
     config.plugins.push(
       new NextFederationPlugin({
         name: "shell_app",

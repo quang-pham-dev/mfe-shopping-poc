@@ -1,37 +1,22 @@
-import App from "./App";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import App from "./App";
 
-let root;
-
-const mount = () => {
+const renderApp = () => {
   const container = document.getElementById("root");
-  if (!container) {
-    console.error("Container element not found");
-    return;
-  }
-  
-  try {
-    root = createRoot(container);
-    root.render(
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    );
-  } catch (error) {
-    console.error("Error mounting app:", error);
-  }
+  if (!container) return;
+
+  const root = createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
 };
 
-// Unmount function for cleanup
-const unmount = () => {
-  if (root) {
-    root.unmount();
-  }
-};
+// Render standalone
+if (!window.remotesLoaded) {
+  renderApp();
+}
 
-// Mount immediately
-mount();
-
-// Export for container usage
-export { mount, unmount };
+export { renderApp };

@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
-import Header from "@/components/Header";
+import { Suspense } from "react";
 
+import Header from "@/components/Header";
 
 const ProductsList = dynamic(
   () => import("products_app/Products").then((mod) => mod.default),
@@ -11,10 +12,14 @@ const ProductsList = dynamic(
 );
 
 const FooterApp = dynamic(
-  () => import("footer_app/Footer").then((mod) => mod.default),
+  () =>
+    import("footer_app/Footer").then((module) => {
+      console.log("Footer module loaded:", module);
+      return module.default;
+    }),
   {
-    loading: () => <p>Loading...</p>,
-    ssr: false
+    ssr: false,
+    loading: () => <div>Loading Footer...</div>
   }
 );
 
@@ -25,7 +30,9 @@ export default function index() {
       <div className="flex-grow">
         <ProductsList />
       </div>
-      <FooterApp />
+      <Suspense fallback={<div>Loading Footer...</div>}>
+        <FooterApp />
+      </Suspense>
     </main>
   );
 }

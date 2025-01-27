@@ -8,6 +8,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 module.exports = {
   entry: "./src/index",
   mode: isDevelopment ? "development" : "production",
+  devtool: isDevelopment ? "source-map" : false,
   devServer: {
     headers: {
       "Access-Control-Allow-Origin": "*",
@@ -29,7 +30,7 @@ module.exports = {
         : "http://localhost:3003/",
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
-    clean: true
+    chunkFilename: "[name].[contenthash].js"
   },
   resolve: {
     extensions: [".jsx", ".js", ".json", ".css"]
@@ -69,21 +70,26 @@ module.exports = {
   plugins: [
     new ModuleFederationPlugin({
       name: "footer_app",
-      library: { type: "var", name: "footer_app" },
+      library: { type: "umd", name: "footer_app" },
+      globalObject: "this",
+      publicPath: "auto",
+      clean: true,
       filename: "remoteEntry.js",
       exposes: {
         "./Footer": "./src/components/Footer.js"
       },
       shared: {
         react: {
-          singleton: true,
           requiredVersion: deps.react,
-          eager: true
+          singleton: true,
+          eager: true,
+          strictVersion: true
         },
         "react-dom": {
-          singleton: true,
           requiredVersion: deps["react-dom"],
-          eager: true
+          singleton: true,
+          eager: true,
+          strictVersion: true
         }
       }
     }),
