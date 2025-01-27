@@ -48,18 +48,14 @@ module.exports = {
           {
             loader: "css-loader",
             options: {
-              importLoaders: 1,
-              modules: {
-                auto: true,
-                localIdentName: "[name]__[local]--[hash:base64:5]"
-              }
+              importLoaders: 1
             }
           },
           {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
-                plugins: ["tailwindcss", "autoprefixer"]
+                plugins: [require("tailwindcss"), require("autoprefixer")]
               }
             }
           }
@@ -82,19 +78,18 @@ module.exports = {
         },
         react: {
           singleton: true,
-          requiredVersion: deps.react,
+          requiredVersion: false,
           eager: true
         },
         "react-dom": {
           singleton: true,
-          requiredVersion: deps["react-dom"],
+          requiredVersion: false,
           eager: true
         }
       }
     }),
     new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      publicPath: "/"
+      template: "./public/index.html"
     })
   ]
 };
