@@ -2,9 +2,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const path = require("path");
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 module.exports = {
   entry: "./src/index",
-  mode: "development",
+  mode: isDevelopment ? "development" : "production",
   devServer: {
     headers: {
       "Access-Control-Allow-Origin": "*",
@@ -20,9 +22,10 @@ module.exports = {
     historyApiFallback: true
   },
   output: {
-    publicPath: "http://localhost:3003/",
+    publicPath: "auto",
     path: path.resolve(__dirname, "dist"),
-    filename: "[name].js"
+    filename: "[name].[contenthash].js",
+    clean: true
   },
   resolve: {
     extensions: [".jsx", ".js", ".json", ".css"]
@@ -72,22 +75,6 @@ module.exports = {
         "./Footer": "./src/components/Footer.js"
       },
       shared: {
-        "tailwind-merge": {
-          singleton: true,
-          requiredVersion: false
-        },
-        "tailwindcss-animate": {
-          singleton: true,
-          requiredVersion: false
-        },
-        "class-variance-authority": {
-          singleton: true,
-          requiredVersion: false
-        },
-        clsx: {
-          singleton: true,
-          requiredVersion: false
-        },
         react: {
           singleton: true,
           version: "0",
