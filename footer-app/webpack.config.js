@@ -5,10 +5,47 @@ const path = require("path");
 const deps = require("./package.json").dependencies;
 const isDevelopment = process.env.NODE_ENV !== "production";
 
+const prodConfig = {
+  optimization: {
+    minimize: true,
+    moduleIds: "deterministic",
+    chunkIds: "deterministic",
+    splitChunks: {
+      chunks: "all",
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    },
+    runtimeChunk: "single"
+  }
+};
+
 module.exports = {
   entry: "./src/index",
   mode: isDevelopment ? "development" : "production",
   devtool: isDevelopment ? "source-map" : false,
+
+  experiments: {
+    topLevelAwait: true
+  },
+
+  resolve: {
+    extensions: [".jsx", ".js", ".json", ".css"],
+    fallback: {
+      react: require.resolve("react"),
+      "react-dom": require.resolve("react-dom")
+    }
+  },
+
   devServer: {
     headers: {
       "Access-Control-Allow-Origin": "*",
@@ -23,18 +60,17 @@ module.exports = {
     hot: true,
     historyApiFallback: true
   },
+
   output: {
-    publicPath:
-      process.env.NODE_ENV === "production"
-        ? "https://mfe-shopping-poc-footer.vercel.app/"
-        : "http://localhost:3003/",
+    publicPath: "auto",
     path: path.resolve(__dirname, "dist"),
-    filename: "[name].[contenthash].js",
-    chunkFilename: "[name].[contenthash].js"
+    filename: isDevelopment ? "[name].js" : "[name].[contenthash].js",
+    chunkFilename: isDevelopment
+      ? "[name].chunk.js"
+      : "[name].[contenthash].chunk.js",
+    clean: true
   },
-  resolve: {
-    extensions: [".jsx", ".js", ".json", ".css"]
-  },
+
   module: {
     rules: [
       {
@@ -67,34 +103,35 @@ module.exports = {
       }
     ]
   },
+
+  ...(isDevelopment ? {} : prodConfig),
+
   plugins: [
     new ModuleFederationPlugin({
       name: "footer_app",
-      library: { type: "umd", name: "footer_app" },
-      globalObject: "this",
-      publicPath: "auto",
-      clean: true,
+      library: { type: "var", name: "footer_app" },
       filename: "remoteEntry.js",
       exposes: {
         "./Footer": "./src/components/Footer.js"
       },
       shared: {
         react: {
-          requiredVersion: deps.react,
           singleton: true,
+          requiredVersion: deps.react,
           eager: true,
-          strictVersion: true
+          strictVersion: false
         },
         "react-dom": {
-          requiredVersion: deps["react-dom"],
           singleton: true,
+          requiredVersion: deps["react-dom"],
           eager: true,
-          strictVersion: true
+          strictVersion: false
         }
       }
     }),
     new HtmlWebpackPlugin({
-      template: "./public/index.html"
+      template: "./public/index.html",
+      chunks: ["main"]
     })
   ]
 };
