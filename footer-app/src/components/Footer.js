@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-gray-200 !h-[10vh] min-h-[10vh] flex items-center justify-center" style={{ height: '10vh' }}>
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-xl text-gray-600 font-semibold">
         &copy; {new Date().getFullYear()} mfe-shopping-poc. All rights reserved.
         Contact to Quang Pham
       </p>

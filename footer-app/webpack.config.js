@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const path = require("path");
 
+const deps = require("./package.json").dependencies;
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = {
@@ -75,6 +76,10 @@ module.exports = {
         "./Footer": "./src/components/Footer.js"
       },
       shared: {
+        ...deps,
+        tailwindcss: {
+          singleton: true
+        },
         react: {
           singleton: true,
           requiredVersion: false,
@@ -89,7 +94,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
-      publicPath: '/'
+      publicPath: "/"
     })
   ]
 };
