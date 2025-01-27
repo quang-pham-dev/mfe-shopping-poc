@@ -1,6 +1,8 @@
 import NextFederationPlugin from "@module-federation/nextjs-mf";
 
 const PRODUCTS_APP_MFE_URL = "https://mfe-shopping-poc-gdtu.vercel.app";
+const FOOTER_APP_MFE_URL = "https://mfe-shopping-poc-footer.vercel.app";
+// const HEADER_APP_MFE_URL = "https://mfe-shopping-poc-header.vercel.app";
 
 const nextConfig = {
   reactStrictMode: true,
@@ -31,10 +33,7 @@ const nextConfig = {
       }
     ];
   },
-  webpack(
-    config: { plugins: NextFederationPlugin[] },
-    options: { isServer: boolean }
-  ) {
+  webpack(config, options) {
     const { isServer } = options;
     config.plugins.push(
       new NextFederationPlugin({
@@ -44,13 +43,20 @@ const nextConfig = {
             process.env.NODE_ENV === "development"
               ? "http://localhost:3001"
               : PRODUCTS_APP_MFE_URL
-          }/_next/static/${isServer ? "ssr" : "chunks"}/remoteEntry.js`
+          }/_next/static/${isServer ? "ssr" : "chunks"}/remoteEntry.js`,
+          footer_app: `footer_app@${
+            process.env.NODE_ENV === "development"
+              ? "http://localhost:3003"
+              : FOOTER_APP_MFE_URL
+          }/remoteEntry.js`,
+          // header_app: `header_app@${
+          //   process.env.NODE_ENV === "development"
+          //     ? "http://localhost:3002"
+          //     : HEADER_APP_MFE_URL
+          // }/remote.js`
         },
         filename: "static/chunks/remoteEntry.js",
-        exposes: {
-          "./Header": "./components/Header.tsx",
-          "./Footer": "./components/Footer.tsx"
-        },
+        exposes: {},
         extraOptions: {
           debug: false, // `false` by default
           exposePages: false // `false` by default
