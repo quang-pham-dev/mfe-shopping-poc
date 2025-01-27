@@ -82,13 +82,13 @@ module.exports = {
         },
         react: {
           singleton: true,
-          requiredVersion: false,
-          eager: isDevelopment
+          requiredVersion: deps.react,
+          eager: true
         },
         "react-dom": {
           singleton: true,
-          requiredVersion: false,
-          eager: isDevelopment
+          requiredVersion: deps["react-dom"],
+          eager: true
         }
       }
     }),
