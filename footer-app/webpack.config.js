@@ -23,7 +23,10 @@ module.exports = {
     historyApiFallback: true
   },
   output: {
-    publicPath: "auto",
+    publicPath:
+      process.env.NODE_ENV === "production"
+        ? "https://mfe-shopping-poc-footer.vercel.app/"
+        : "http://localhost:3003/",
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
     clean: true
@@ -72,18 +75,14 @@ module.exports = {
         "./Footer": "./src/components/Footer.js"
       },
       shared: {
-        ...deps,
-        tailwindcss: {
-          singleton: true
-        },
         react: {
           singleton: true,
-          requiredVersion: false,
+          requiredVersion: deps.react,
           eager: true
         },
         "react-dom": {
           singleton: true,
-          requiredVersion: false,
+          requiredVersion: deps["react-dom"],
           eager: true
         }
       }
