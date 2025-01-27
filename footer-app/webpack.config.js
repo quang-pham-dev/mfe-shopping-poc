@@ -77,18 +77,19 @@ module.exports = {
       shared: {
         react: {
           singleton: true,
-          version: "0",
-          requiredVersion: false
+          requiredVersion: false,
+          eager: isDevelopment
         },
         "react-dom": {
           singleton: true,
-          version: "0",
-          requiredVersion: false
+          requiredVersion: false,
+          eager: isDevelopment
         }
       }
     }),
     new HtmlWebpackPlugin({
-      template: "./public/index.html"
+      template: "./public/index.html",
+      publicPath: '/'
     })
   ]
 };

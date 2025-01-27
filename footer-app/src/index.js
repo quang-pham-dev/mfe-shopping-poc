@@ -1,1 +1,2 @@
-import('./bootstrap');
+// Bootstrap the app
+import("./bootstrap");
