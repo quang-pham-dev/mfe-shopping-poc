@@ -1,33 +1,9 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("@module-federation/enhanced");
 const path = require("path");
-
 const deps = require("./package.json").dependencies;
-const isDevelopment = process.env.NODE_ENV !== "production";
 
-const prodConfig = {
-  optimization: {
-    minimize: true,
-    moduleIds: "deterministic",
-    chunkIds: "deterministic",
-    splitChunks: {
-      chunks: "all",
-      cacheGroups: {
-        defaultVendors: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10,
-          reuseExistingChunk: true
-        },
-        default: {
-          minChunks: 2,
-          priority: -20,
-          reuseExistingChunk: true
-        }
-      }
-    },
-    runtimeChunk: "single"
-  }
-};
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = {
   entry: "./src/index",
@@ -36,14 +12,6 @@ module.exports = {
 
   experiments: {
     topLevelAwait: true
-  },
-
-  resolve: {
-    extensions: [".jsx", ".js", ".json", ".css"],
-    fallback: {
-      react: require.resolve("react"),
-      "react-dom": require.resolve("react-dom")
-    }
   },
 
   devServer: {
@@ -62,13 +30,21 @@ module.exports = {
   },
 
   output: {
-    publicPath: "auto",
+    publicPath: isDevelopment ? "auto" : "/",
     path: path.resolve(__dirname, "dist"),
     filename: isDevelopment ? "[name].js" : "[name].[contenthash].js",
     chunkFilename: isDevelopment
       ? "[name].chunk.js"
       : "[name].[contenthash].chunk.js",
     clean: true
+  },
+
+  resolve: {
+    extensions: [".jsx", ".js", ".json", ".css"],
+    fallback: {
+      react: require.resolve("react"),
+      "react-dom": require.resolve("react-dom")
+    }
   },
 
   module: {
@@ -78,7 +54,17 @@ module.exports = {
         loader: "babel-loader",
         exclude: /node_modules/,
         options: {
-          presets: ["@babel/preset-react"]
+          presets: [
+            "@babel/preset-react",
+            [
+              "@babel/preset-env",
+              {
+                targets: {
+                  browsers: ["last 2 versions", "not dead"]
+                }
+              }
+            ]
+          ]
         }
       },
       {
@@ -104,12 +90,34 @@ module.exports = {
     ]
   },
 
-  ...(isDevelopment ? {} : prodConfig),
+  optimization: {
+    minimize: !isDevelopment,
+    moduleIds: "deterministic",
+    chunkIds: "deterministic",
+    splitChunks: {
+      chunks: "all",
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10,
+          reuseExistingChunk: true
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    }
+  },
 
   plugins: [
     new ModuleFederationPlugin({
       name: "footer_app",
-      library: { type: "var", name: "footer_app" },
+      library: {
+        type: "var",
+        name: "footer_app"
+      },
       filename: "remoteEntry.js",
       exposes: {
         "./Footer": "./src/components/Footer.js"
@@ -118,19 +126,18 @@ module.exports = {
         react: {
           singleton: true,
           requiredVersion: deps.react,
-          eager: true,
-          strictVersion: false
+          eager: true
         },
         "react-dom": {
           singleton: true,
           requiredVersion: deps["react-dom"],
-          eager: true,
-          strictVersion: false
+          eager: true
         }
       }
     }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      inject: true,
       chunks: ["main"]
     })
   ]
